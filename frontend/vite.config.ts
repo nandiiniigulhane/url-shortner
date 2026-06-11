@@ -5,6 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    allowedHosts: ['.ngrok-free.app', '.ngrok-free.dev', 'localhost'],
     proxy: {
       '/api': process.env.VITE_API_PROXY || 'http://localhost:8000',
       '/health': process.env.VITE_API_PROXY || 'http://localhost:8000',

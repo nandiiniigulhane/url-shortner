@@ -1,11 +1,11 @@
-from pydantic import BaseModel, HttpUrl, field_validator
+from pydantic import BaseModel, AnyUrl, field_validator
 from datetime import datetime
 from typing import Optional
 import re
 
 
 class ShortenRequest(BaseModel):
-    long_url: HttpUrl
+    long_url: AnyUrl
     custom_alias: Optional[str] = None
     expires_in_days: Optional[int] = None
     password: Optional[str] = None

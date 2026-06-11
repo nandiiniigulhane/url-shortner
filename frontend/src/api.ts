@@ -1,4 +1,4 @@
-interface ShortenResponse {
+export interface ShortenResponse {
   short_url: string;
   long_url: string;
   alias: string;
