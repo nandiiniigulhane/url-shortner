@@ -1,6 +1,6 @@
-# URL Shortner
+# SnipLink
 
-A high-performance URL shortening service built for scale — handles **100M daily users** with low-latency redirects, custom aliases, password protection, and expiration dates.
+A high-performance URL shortener — low-latency redirects, custom aliases, QR codes, password protection, and expiration dates.
 
 > Built with [Command Code](https://commandcode.ai) — the coding agent that learns your style.
 
