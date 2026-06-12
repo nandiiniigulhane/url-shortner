@@ -173,3 +173,18 @@ async def get_user_urls(db_pool: aiomysql.Pool, user_id: int) -> list[dict]:
                 }
                 for row in rows
             ]
+
+
+async def delete_url(db_pool: aiomysql.Pool, redis_client: aioredis.Redis, alias: str, user_id: int) -> bool:
+    async with db_pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(
+                "DELETE FROM urls WHERE alias = %s AND user_id = %s",
+                (alias, user_id),
+            )
+            deleted = cur.rowcount > 0
+
+    if deleted:
+        await redis_client.delete(f"url:{alias}")
+
+    return deleted

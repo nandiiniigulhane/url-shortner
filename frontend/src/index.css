@@ -508,6 +508,23 @@ body {
 .history-badge-custom {
   background: rgba(34,197,94,0.08); color: var(--success);
 }
+.history-qr-expanded {
+  margin-top: 12px; padding: 14px;
+  background: #ffffff; border-radius: var(--radius);
+  border: 1px solid var(--border);
+  display: inline-block;
+}
+.history-qr-img {
+  display: block; width: 140px; height: 140px; border-radius: 4px;
+}
+.btn-delete {
+  color: var(--danger) !important;
+  border-color: transparent !important;
+}
+.btn-delete:hover {
+  background: rgba(239,68,68,0.08) !important;
+  color: var(--danger) !important;
+}
 
 /* ─── Responsive ─── */
 @media (max-width: 768px) {

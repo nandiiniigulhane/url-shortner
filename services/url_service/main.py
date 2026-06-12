@@ -11,7 +11,7 @@ from shared.database import get_pool, init_db
 from shared.cache import get_redis
 from services.url_service.code_generator import generate_short_code, seed_counter_from_db
 from services.url_service.url_repository import (
-    create_url, get_url, alias_exists, lookup_alias, verify_and_get_url, get_user_urls,
+    create_url, get_url, alias_exists, lookup_alias, verify_and_get_url, get_user_urls, delete_url,
 )
 from services.url_service.password_page import password_page_html
 
@@ -139,6 +139,24 @@ async def list_user_urls(
             for r in rows
         ]
     )
+
+
+@app.delete("/api/urls/{alias}")
+async def delete_user_url(
+    alias: str,
+    request: Request,
+    db_pool: aiomysql.Pool = Depends(get_db),
+    redis_client: aioredis.Redis = Depends(get_cache),
+):
+    user = await get_optional_user(request)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Authentication required")
+
+    ok = await delete_url(db_pool, redis_client, alias, user["id"])
+    if not ok:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="URL not found or not owned by you")
+
+    return {"detail": "deleted"}
 
 
 @app.get("/{alias}")

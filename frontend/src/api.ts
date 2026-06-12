@@ -75,3 +75,7 @@ export async function getMyUrls(): Promise<UrlHistoryItem[]> {
   const data = await request<{ urls: UrlHistoryItem[] }>('/api/urls');
   return data.urls;
 }
+
+export async function deleteUrl(alias: string): Promise<void> {
+  await request<{ detail: string }>(`/api/urls/${alias}`, { method: 'DELETE' });
+}
