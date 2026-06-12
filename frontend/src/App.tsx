@@ -219,7 +219,11 @@ function UrlHistory() {
                 <div className="history-item-header">
                   <a href={u.short_url} target="_blank" rel="noopener noreferrer" className="history-short-url">{u.short_url}</a>
                   {u.has_password && <span className="history-badge history-badge-locked"><svg aria-hidden="true" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Locked</span>}
-                  {u.expires_at && <span className="history-badge history-badge-expiry">Expires {new Date(u.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>}
+                  <span className={`history-badge ${u.expires_at ? 'history-badge-expiry' : 'history-badge-permanent'}`}>
+                    {u.expires_at
+                      ? `Expires ${new Date(u.expires_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+                      : 'No expiry'}
+                  </span>
                 </div>
                 <div className="history-long-url" title={u.long_url}>{u.long_url}</div>
                 <div className="history-item-meta">
