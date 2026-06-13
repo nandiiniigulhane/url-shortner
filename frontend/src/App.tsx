@@ -5,6 +5,21 @@ import QRCode from 'qrcode';
 type Status = 'idle' | 'loading' | 'success' | 'error';
 type AuthMode = 'login' | 'register' | null;
 
+async function shareQr(dataUrl: string, alias: string): Promise<void> {
+  const res = await fetch(dataUrl);
+  const blob = await res.blob();
+  const file = new File([blob], `qr-${alias}.png`, { type: 'image/png' });
+
+  if (navigator.share && navigator.canShare?.({ files: [file] })) {
+    await navigator.share({ files: [file], title: 'QR Code' });
+  } else {
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = `qr-${alias}.png`;
+    a.click();
+  }
+}
+
 function useAnnounce() {
   const [message, setMessage] = useState('');
   useEffect(() => {
@@ -282,6 +297,12 @@ function UrlHistory() {
                 {expandedQr === u.alias && qrCache[u.alias] && (
                   <div className="history-qr-expanded">
                     <img src={qrCache[u.alias]} alt={`QR code for ${u.short_url}`} className="history-qr-img" />
+                    <div style={{ marginTop: 10, display: 'flex', gap: 8, justifyContent: 'center' }}>
+                      <button onClick={() => shareQr(qrCache[u.alias], u.alias)} className="btn-ghost" style={{ padding: '6px 14px', fontSize: 12 }}>
+                        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4 }}><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                        Share QR
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -385,6 +406,12 @@ function UrlShortenerBar({ onSuccess }: { onSuccess: () => void }) {
     a.click();
   };
 
+  const handleShareQr = async () => {
+    if (!qrDataUrl || !result) return;
+    const alias = result.short_url.split('/').pop()!;
+    await shareQr(qrDataUrl, alias);
+  };
+
   useEffect(() => {
     if (result) {
       QRCode.toDataURL(result.short_url, { width: 200, margin: 2, color: { dark: '#0d0d16', light: '#ffffff' } })
@@ -464,10 +491,16 @@ function UrlShortenerBar({ onSuccess }: { onSuccess: () => void }) {
               {qrDataUrl && (
                 <div className="qr-section">
                   <img src={qrDataUrl} alt="QR code for shortened URL" className="qr-image" />
-                  <button onClick={handleDownloadQr} className="btn-ghost qr-download-btn">
-                    <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Download QR
-                  </button>
+                  <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                    <button onClick={handleShareQr} className="btn-ghost qr-download-btn">
+                      <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                      Share QR
+                    </button>
+                    <button onClick={handleDownloadQr} className="btn-ghost qr-download-btn">
+                      <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Download QR
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
